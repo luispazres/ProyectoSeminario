@@ -2,8 +2,17 @@ var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+function initIndexRoute(db){
 
-module.exports = router;
+  router.get('/', function(req, res, next){
+    res.render('mobile_index', {layout:'layout_mobile',title: 'Express'});
+  });
+
+  router.get('/desktop', function(req,res,next){
+    res.render('index',{title:"Landing Page"});
+  });
+
+  return router;
+}
+
+module.exports = initIndexRoute;
