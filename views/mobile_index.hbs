@@ -2,7 +2,7 @@
   <div data-role="header">
     <a  href="" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
     <a href="#inicioDeSesion" class="ui-btn ui-icon-user ui-btn-icon-notext"></a>
-    <h1>Novus</h1>
+    <h2><img src="\images\LOGO18.png" alt="" /></h2>
   </div>
   <div role="main" class="ui-content">
     <ul data-role="listview" id="splash_listview">
@@ -64,6 +64,46 @@
                 <button class="ui-btn ui-shadow" id="cerrarDeSesion-send">Cerrar Sesion</button>
             </div>
         </form>
+  </div>
+  <div data-role="footer" data-position="fixed">
+    <div data-role="navbar">
+      <ul>
+        <li>
+            <a href="#home" class="ui-btn ui-icon-home ui-btn-icon-top">Home</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div data-role="page" id="agregarProductos" data-position="fixed">
+  <div data-role="header">
+    <a href="" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
+    <a href="#inicioDeSesion" class="ui-btn ui-icon-home ui-btn-icon-notext"></a>
+    <h1>Novus</h1>
+  </div>
+  <div role="main" class="ui-content" id="splash_InicioDeSesion">
+  <h2>Agregar Productos</h2>
+  <form id="frm_login">
+          <div class="ui-field-contain">
+              <label for="lgn_user">Nombre del Producto</label>
+              <input type="text" data-clear-btn="true" name="txtNombreProducto" id="txtNombreProducto" value="">
+              <br/>
+              <label for="lgn_user">Precio de Compra</label>
+              <input type="text" data-clear-btn="true" name="txtPrecioCompra" id="txtPrecioCompra" value="">
+              <br/>
+              <label for="lgn_user">Precio de Venta</label>
+              <input type="text" data-clear-btn="true" name="txtPrecioVenta" id="txtPrecioVenta" value="">
+              <br/>
+              <label for="lgn_user">Stock</label>
+              <input type="text" data-clear-btn="true" name="txtStock" id="txtStock" value="">
+              <br/>
+              <label for="lgn_user">Impuesto Medico</label>
+              <input type="text" data-clear-btn="true" name="txtImpuestoMedico" id="txtImpuestoMedico" value="">
+              <br/>
+              <button class="ui-btn ui-shadow" id="agregarPoducto-send">Agregar Producto</button>
+          </div>
+      </form>
   </div>
   <div data-role="footer" data-position="fixed">
     <div data-role="navbar">

@@ -1,5 +1,5 @@
 var newbacklogBinded = false, uploadBtnBinded = false, btnloginBinded = false,
-    btnRegisterBinded = false, btnDeleteBinded = false;
+    btnRegisterBinded = false, btnDeleteBinded = false, nuevoProductoIngresado=false;
 var selectedBacklogItemID = "";
 var content, html, picFile;
 
@@ -54,6 +54,9 @@ $(document).on("pagecontainerbeforeshow", function(e, ui) {
             if (btnloginBinded) {
               $("#cerrarDeSesion-send").on("click", btnCerrarSesion);
             }
+          break;
+        case "agregarProductos":
+          $("#agregarPoducto-send").on("click", btnAgregarProducto);
           break;
 
     }
@@ -120,6 +123,32 @@ function btnCerrarSesion(e){
   btnloginBinded = false;
   console.log(btnloginBinded);
   changePage("home");
+}
+
+function btnAgregarProducto(e){
+  e.preventDefault();
+  e.stopPropagation();
+
+  var formObject={};
+  formObject.nombreProducto= $("#txtNombreProducto").val();
+  formObject.precioCompra=$("#txtPrecioCompra").val();
+  formObject.precioVenta=$("#txtPrecioVenta").val();
+  formObject.stock=$("#txtStock").val();
+  formObject.impuestoMedico=$("#txtImpuestoMedico").val();
+
+  $.post(
+    '/api/productos/ingresarProducto',
+    formObject,
+    function(docs, scsTxt, xhrq){
+      if(docs){
+        alert("Producto ingresado correctamente");
+        changePage("home");
+      }else {
+        alert("Usuario o contrasenia invalidos.");
+      }
+    },
+    'json'
+  );
 }
 
 function showLoading(){

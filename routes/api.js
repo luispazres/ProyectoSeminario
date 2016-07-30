@@ -6,6 +6,7 @@ var assign = require('object-assign');
 function initApiRoute(db){
 
   var usuarios = db.collection('usuarios');
+  var productos=db.collection('productos');
 
   router.get('/usuarios/obtenerUsuarios', function(req,res,next){
     usuarios.find({}).toArray(function(err,docs){
@@ -49,6 +50,30 @@ function initApiRoute(db){
       }
     });
   });
+
+  router.post('/productos/ingresarProducto', function(req, res, next){
+          var doc = {"nombre":"",
+           "precioCompra":"",
+           "precioVenta":"",
+           "stock" :"",
+           "impuestoMedico":""
+         };
+
+         doc.nombre=req.body.nombreProducto;
+         doc.precioCompra=req.body.precioCompra;
+         doc.precioVenta=req.body.precioVenta;
+         doc.stock=req.body.stock;
+         doc.impuestoMedico=req.body.impuestoMedico;
+
+          productos.insertOne(doc,function(err, result){
+            if(err){
+              console.log(err);
+              res.status(500).json({"error": "Ocurrio un erro al agregar los datos"});
+            }else{
+              res.status(200).json({"Inserted": "ok"});
+            }
+          });
+      });//end CREATEPRODUCTS
 
   return router;
 }
