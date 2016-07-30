@@ -58,12 +58,19 @@ $(document).on("pagecontainerbeforeshow", function(e, ui) {
         case "agregarProductos":
           $("#agregarPoducto-send").on("click", btnAgregarProducto);
           break;
+        case "conocenos":
+          cargarConocenos(ui.toPage);
+          break;
 
     }
 });
 
 function changePage(to){
   $(":mobile-pagecontainer").pagecontainer("change","#"+to);
+}
+
+function cargarConocenos(backlog_page){
+  showLoading();
 }
 
 function cargarHome(backlog_page) {

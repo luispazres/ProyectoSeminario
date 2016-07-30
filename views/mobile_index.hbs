@@ -1,6 +1,13 @@
 <div data-role="page" id="home" data-position="fixed">
+  <div data-role="panel" id="novusPanel" data-display="push" class="">
+    <!-- panel content goes here -->
+    <ul data-role="listview">
+      <li data-icon="plus"><a href="#agregarProductos" data-rel="">Agregar Productos</a></li>
+      <li data-icon="info"><a href="#conocenos" data-rel="">Conocenos</a></li>
+    </ul>
+</div><!-- /panel -->
   <div data-role="header">
-    <a  href="" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
+    <a  href="#novusPanel" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
     <a href="#inicioDeSesion" class="ui-btn ui-icon-user ui-btn-icon-notext"></a>
     <h2><img src="\images\LOGO18.png" alt="" /></h2>
   </div>
@@ -20,10 +27,53 @@
   </div>
 </div>
 
+<div data-role="page" id="conocenos" data-position="fixed">
+  <div data-role="panel" id="novusPanel" data-display="push" class="">
+    <!-- panel content goes here -->
+    <ul data-role="listview">
+      <li data-icon="plus"><a href="#agregarProductos" data-rel="">Agregar Productos</a></li>
+      <li data-icon="info"><a href="#conocenos" data-rel="">Conocenos</a></li>
+    </ul>
+</div><!-- /panel -->
+  <div data-role="header">
+    <a  href="#novusPanel" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
+    <a href="#inicioDeSesion" class="ui-btn ui-icon-user ui-btn-icon-notext"></a>
+    <h2><img src="\images\LOGO18.png" alt="" /></h2>
+  </div>
+  <div role="main" class="ui-content">
+    <h2>Quienes somos?</h2>
+    <div class="ui-corner-all custom-corners">
+      <div class="ui-bar ui-bar-a">
+        <h3 align="center">Vision</h3>
+      </div>
+      <div class="ui-body ui-body-a">
+        <p>En los próximos 5 años, ser la empresa líder en la venta de instrumentos, artículos, insumos y servicios relacionados con el área de la salud, reconocida por estrategias y acciones innovadoras que faciliten el desarrollo de estudiantes y profesionales en beneficio de la población.</p>
+      </div>
+    </div>
+    <div class="ui-corner-all custom-corners">
+      <div class="ui-bar ui-bar-a">
+        <h3>Mision</h3>
+      </div>
+      <div class="ui-body ui-body-a">
+        <p>Somos una empresa fundada por una sociedad de estudiantes del área de la salud, dedicada a la distribución y venta de instrumentos, artículos, insumos y servicios relacionados; dirigido a estudiantes, profesionales y población en general, utilizando estrategias personalizadas y eficaces ofreciendo precios justos con responsabilidad y proyección social.</p>
+      </div>
+    </div>
+  </div>
+  <div data-role="footer" data-position="fixed">
+    <div data-role="navbar">
+      <ul>
+        <li>
+          <a href="#home" class="ui-btn ui-icon-home ui-btn-icon-top">Home</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <div data-role="page" id="inicioDeSesion" data-position="fixed">
   <div data-role="header">
-    <a href="" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
-    <a href="#inicioDeSesion" class="ui-btn ui-icon-home ui-btn-icon-notext"></a>
+    <a href="#novusPanel" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
+    <a href="#inicioDeSesion" class="ui-btn ui-icon-user ui-btn-icon-notext"></a>
     <h1>Novus</h1>
   </div>
   <div role="main" class="ui-content" id="splash_InicioDeSesion">
@@ -53,8 +103,8 @@
 
 <div data-role="page" id="cerrarSesion" data-position="fixed">
   <div data-role="header">
-      <a href="" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
-      <a href="#inicioDeSesion" class="ui-btn ui-icon-home ui-btn-icon-notext"></a>
+      <a href="#novusPanel" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
+      <a href="#inicioDeSesion" class="ui-btn ui-icon-user ui-btn-icon-notext"></a>
     <h1>Novus</h1>
   </div>
   <div role="main" class="ui-content" id="splash_InicioDeSesion">
@@ -78,8 +128,8 @@
 
 <div data-role="page" id="agregarProductos" data-position="fixed">
   <div data-role="header">
-    <a href="" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
-    <a href="#inicioDeSesion" class="ui-btn ui-icon-home ui-btn-icon-notext"></a>
+    <a href="#novusPanel" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
+    <a href="#inicioDeSesion" class="ui-btn ui-icon-user ui-btn-icon-notext"></a>
     <h1>Novus</h1>
   </div>
   <div role="main" class="ui-content" id="splash_InicioDeSesion">
