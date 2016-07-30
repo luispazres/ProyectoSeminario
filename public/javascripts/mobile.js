@@ -32,6 +32,14 @@ $(document).on("pagebeforechange", function(e, data) {
                     });
                 }
                 break;
+              case "agregarProductos":
+              if (btnloginBinded === false){
+                  data.toPage[0] = $("#inicioDeSesion")[0];
+                  $.extend(data.options, {
+                      transition: "flip"
+                  });
+                }
+                break;
         }
     }
 });

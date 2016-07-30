@@ -40,7 +40,7 @@ function initApiRoute(db){
     doc.nombreUsuario=req.body.nombreUsuario;
     doc.contrasenia=req.body.contrasenia;
     usuarios.findOne(doc,
-                    {"fields":{"_id":1,"sesion":1}} ,
+                    {"fields":{"_id":1,"usuarioRol":1}} ,
                     function(err, doc){
       if(err){
         console.log(err);
