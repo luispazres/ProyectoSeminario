@@ -1,5 +1,7 @@
-<div data-role="page" id="splash" data-position="fixed">
+<div data-role="page" id="home" data-position="fixed">
   <div data-role="header">
+    <a  href="" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
+    <a href="#inicioDeSesion" class="ui-btn ui-icon-user ui-btn-icon-notext"></a>
     <h1>Novus</h1>
   </div>
   <div role="main" class="ui-content">
@@ -11,10 +13,7 @@
     <div data-role="navbar">
       <ul>
         <li>
-          <a href="#splash">Inicio</a>
-        </li>
-        <li>
-          <a href="#inicioDeSesion">Iniciar Sesion</a>
+          <a href="#home" class="ui-btn ui-icon-home ui-btn-icon-top">Home</a>
         </li>
       </ul>
     </div>
@@ -23,27 +22,54 @@
 
 <div data-role="page" id="inicioDeSesion" data-position="fixed">
   <div data-role="header">
+    <a href="" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
+    <a href="#inicioDeSesion" class="ui-btn ui-icon-home ui-btn-icon-notext"></a>
     <h1>Novus</h1>
   </div>
-  <div role="main" class="ui-content">
-    <h2>Inicio de Sesion</h2>
-    <br>
-    <label>Nombre de Usuario</label>
-    <input type="text" name="txtNombreUsuario" id="txtNombreUsuario" value="">
-    <br>
-    <label>Contrasenia</label>
-    <input type="password" name="txtContrasenia" id="txtContrasenia" value="">
-    <br>
-    <button id="inicioDeSesion-send">Ingresar</button>
+  <div role="main" class="ui-content" id="splash_InicioDeSesion">
+  <h2>Inicio de Sesion</h2>
+  <form id="frm_login">
+          <div class="ui-field-contain">
+              <label for="lgn_user">Usuario</label>
+              <input type="text" data-clear-btn="true" name="txtNombreUsuario" id="txtNombreUsuario" value="">
+              <br/>
+              <label for="lgn_pwd">Password</label>
+              <input type="password" data-clear-btn="true" name="txtContrasenia" id="txtContrasenia" value="" autocomplete="off">
+              <br/>
+              <button class="ui-btn ui-shadow" id="inicioDeSesion-send">Iniciar Sesion</button>
+          </div>
+      </form>
   </div>
   <div data-role="footer" data-position="fixed">
     <div data-role="navbar">
       <ul>
         <li>
-          <a href="#splash">Inicio</a>
+            <a href="#home" class="ui-btn ui-icon-home ui-btn-icon-top">Home</a>
         </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div data-role="page" id="cerrarSesion" data-position="fixed">
+  <div data-role="header">
+      <a href="" class="ui-btn ui-icon-bars ui-btn-icon-notext"></a>
+      <a href="#inicioDeSesion" class="ui-btn ui-icon-home ui-btn-icon-notext"></a>
+    <h1>Novus</h1>
+  </div>
+  <div role="main" class="ui-content" id="splash_InicioDeSesion">
+    <form id="frm_login">
+            <div class="ui-field-contain">
+                <h2>Desea cerrar sesion?</h2>
+                <button class="ui-btn ui-shadow" id="cerrarDeSesion-send">Cerrar Sesion</button>
+            </div>
+        </form>
+  </div>
+  <div data-role="footer" data-position="fixed">
+    <div data-role="navbar">
+      <ul>
         <li>
-          <a href="#inicioDeSesion">Iniciar Sesion</a>
+            <a href="#home" class="ui-btn ui-icon-home ui-btn-icon-top">Home</a>
         </li>
       </ul>
     </div>

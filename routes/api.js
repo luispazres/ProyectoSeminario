@@ -19,15 +19,34 @@ function initApiRoute(db){
     });//end to arry
   });//final Obtener Usuarios
 
-  router.get('/usuarios/inicioDeSesionParcial/:usuario', function(req,res,next){
-    usuarios.findOne({"nombreUsuario":req.params.usuario}).toArray(function(err,docs){
-        if (err) {
-          console.log(err);
-          res.status(500).json({"error":"Error al obtener documentos"});
-        }
-        else {
-          res.status(200).json(docs);
-        }
+  router.post('/usuarios/inicioDeSesionParcial',function(req,res,next){
+    var doc={"nombreUsuario":""};
+    doc.nombreUsuario=req.body.nombreUsuario;
+    usuarios.findOne(doc,
+                    {"fields":{"_id":1,"sesion":1}} ,
+                    function(err, doc){
+      if(err){
+        console.log(err);
+        res.status(500).json({"error":"no se puede obtener documentos"});
+      }else{
+        res.status(200).json(doc);
+      }
+    });
+  });
+
+  router.post('/usuarios/inicioDeSesionTotal',function(req,res,next){
+    var doc={"nombreUsuario":"", "contrasenia":""};
+    doc.nombreUsuario=req.body.nombreUsuario;
+    doc.contrasenia=req.body.contrasenia;
+    usuarios.findOne(doc,
+                    {"fields":{"_id":1,"sesion":1}} ,
+                    function(err, doc){
+      if(err){
+        console.log(err);
+        res.status(500).json({"error":"no se puede obtener documentos"});
+      }else{
+        res.status(200).json(doc);
+      }
     });
   });
 

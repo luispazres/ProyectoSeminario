@@ -1,41 +1,130 @@
-$("#splash").on("pagecreate",function(e){
-  $.get(
-    "/api/usuarios/obtenerUsuarios",
-    {},
-    function(usuarios, scsTxt, xhrq){
-      //aqui vamos renderizar los libros
-      if(usuarios){
-        var htmlBuffer = usuarios.map(function(usuario, i){
-          return "<li><a href>" + usuario.nombreUsuario +"</a></li>";
-        }); //end map
-        $("#splash_listview").html(htmlBuffer.join("")).listview("refresh");
+var newbacklogBinded = false, uploadBtnBinded = false, btnloginBinded = false,
+    btnRegisterBinded = false, btnDeleteBinded = false;
+var selectedBacklogItemID = "";
+var content, html, picFile;
 
-      }
-    },
-    'json'
-  );
+$(document).on("mobileinit", function(e){
+    $.mobile.loader.prototype.options.text = "Please Wait";
+    $.mobile.loader.prototype.options.textVisible = true;
+
+    $.ajaxSetup({
+        xhrFields:{
+            withCredentials:true
+        }
+    });
 });
 
-$("#inicioDeSesion").on('pagecreate', function(e){
-  $("#inicioDeSesion-send").on('click',function(e){
-    var formObject={};
-    formObject.nombreUsuario= $("#txtNombreUsuario").val();
-    formObject.contrasenia=$("#txtContrasenia").val();
+$(document).ajaxError(function(e, xhr, set, err){
+    if(xhr.status===403){
+        change_page("inicioDeSesion");
+    }
+});
 
-    $.get(
-      "/api/usuarios/inicioDeSesionParcial/:"+formObject.nombreUsuario,
-      {},
-      function(documento, scsTxt,xhrq){
-        console.log(documento);
-        if (documento) {
-          alert("fdfdf");
+$(document).on("pagebeforechange", function(e, data) {
+    if (typeof data.toPage === "object") {
+        var pageid = data.toPage.attr("id");
+        switch (pageid) {
+              case "inicioDeSesion":
+                if (btnloginBinded === true) {
+                    data.toPage[0] = $("#cerrarSesion")[0];
+                    $.extend(data.options, {
+                        transition: "flip"
+                    });
+                }
+                break;
         }
-      },
-      'json'
-    );
-  });
+    }
+});
+
+
+$(document).on("pagecontainerbeforeshow", function(e, ui) {
+    var pageid = ui.toPage.attr("id");
+    switch (pageid) {
+        case "home":
+            //....
+            cargarHome(ui.toPage);
+            break;
+        case "inicioDeSesion":
+            //....
+            if(!btnloginBinded){
+                $("#inicioDeSesion-send").on("click", btnIniciarSesion);
+            }
+            break;
+        case "cerrarSesion":
+            if (btnloginBinded) {
+              $("#cerrarDeSesion-send").on("click", btnCerrarSesion);
+            }
+          break;
+
+    }
 });
 
 function changePage(to){
   $(":mobile-pagecontainer").pagecontainer("change","#"+to);
+}
+
+function cargarHome(backlog_page) {
+    showLoading();
+    console.log(btnloginBinded);
+    $.get(
+      "/api/usuarios/obtenerUsuarios",
+      {},
+      function(usuarios, scsTxt, xhrq){
+        if(usuarios){
+          var htmlBuffer = usuarios.map(function(usuario, i){
+            return "<li><a href> Nombre de usuario:" + usuario.nombreUsuario +", Contrasenia: "+usuario.contrasenia+"</a></li>";
+          });
+          $("#splash_listview").html(htmlBuffer.join("")).listview("refresh");
+        }
+      },
+      'json'
+    );
+}
+
+function btnIniciarSesion(e){
+  e.preventDefault();
+  e.stopPropagation();
+  console.log(btnloginBinded);
+  var formObject={};
+  formObject.nombreUsuario= $("#txtNombreUsuario").val();
+  formObject.contrasenia=$("#txtContrasenia").val();
+  $.post(
+    '/api/usuarios/inicioDeSesionParcial',
+    formObject,
+    function(usuarios, scsTxt, xhrq){
+      if(usuarios){
+        $.post(
+          '/api/usuarios/inicioDeSesionTotal',
+          formObject,
+          function(usuarios,scsTxt,xhrq){
+            if (usuarios) {
+              btnloginBinded = true;
+              alert("Ha iniciado sesion exitosamente.");
+              changePage("home");
+            }else {
+              alert("Usuario o contrasenia invalidos.");
+            }
+          }
+        )
+      }else {
+        alert("Usuario o contrasenia invalidos.");
+      }
+    },
+    'json'
+  );
+}
+
+function btnCerrarSesion(e){
+  e.preventDefault();
+  e.stopPropagation();
+  btnloginBinded = false;
+  console.log(btnloginBinded);
+  changePage("home");
+}
+
+function showLoading(){
+    $.mobile.loading( 'show');
+}
+function hideLoading(){
+    $.mobile.loading( 'hide');
 }
