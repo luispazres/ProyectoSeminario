@@ -6,7 +6,7 @@ var content, html, picFile;*/
 var newbacklogBinded = false, uploadBtnBinded = false, btnloginBinded = false,
     uploadBtnBinded2 = false, btnRegisterBinded = false, btnDeleteBinded = false,nuevoProductoIngresado=false, usuarioAdministrador=false;
 var selectedBacklogItemID = "";
-var content, html, picFile;
+var content, html, picFile,html2;
 var carrito=[];
 
 
@@ -194,19 +194,27 @@ function load_backlogitem_dataProducto(backlogitem_page) {
         function(doc, status, xhr) {
             if(!content){
                 content = $(backlogitem_page).find(".ui-content");
+                content2 = $(backlogitem_page).find(".ui-content2");
                 html = content.html();
+                html2 =content2.html();
+
             }
 
+            var htmlObj2=$(html2);
             var htmlObj = $(html);
             for (var i in doc) {
                 htmlObj.find("#d_" + i).html(doc[i]);
             }
-            
+
+          //  htmlObj.append('<div class="valHld"><input type="range" name="slider-fill" class="valHld" id="d_stock" value="1" min="1" max="'+doc.stock+'" step="1" data-highlight="true"></div>');
+
             if(doc.fotos){
                 for (var k = 0; k< doc.fotos.length ; k ++){
                     htmlObj.append('<div><img src="'+doc.fotos[k]+'" /></div>');
                 }
             }
+        //    content2.html(htmlObj2).find("#txtStock");
+
             content.html(htmlObj).find("#btnDelete2").on("click", btnDelete_onclick);
             hideLoading();
         },
@@ -219,6 +227,9 @@ function load_backlogitem_dataProducto(backlogitem_page) {
     );
 }
 
+function stockChange(e){
+
+}
 
 function load_backlog_data(backlog_page) {
     showLoading();
