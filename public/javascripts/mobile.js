@@ -1,7 +1,13 @@
+/*var newbacklogBinded = false, uploadBtnBinded = false, btnloginBinded = false,
+    btnRegisterBinded = false, btnDeleteBinded = false, nuevoProductoIngresado=false, usuarioAdministrador=false;
+var selectedBacklogItemID = "";
+var content, html, picFile;*/
+
 var newbacklogBinded = false, uploadBtnBinded = false, btnloginBinded = false,
-    btnRegisterBinded = false, btnDeleteBinded = false, nuevoProductoIngresado=false;
+    uploadBtnBinded2 = false, btnRegisterBinded = false, btnDeleteBinded = false,nuevoProductoIngresado=false, usuarioAdministrador=false;
 var selectedBacklogItemID = "";
 var content, html, picFile;
+
 
 $(document).on("mobileinit", function(e){
     $.mobile.loader.prototype.options.text = "Please Wait";
@@ -38,37 +44,79 @@ $(document).on("pagebeforechange", function(e, data) {
                   $.extend(data.options, {
                       transition: "flip"
                   });
+                }else {
+                  if (usuarioAdministrador===false) {
+                    alert("Necesita ser administrador para acceder a esta pagina.");
+                    data.toPage[0] = $("#home")[0];
+                    $.extend(data.options, {
+                        transition: "flip"
+                    });
+                  }
+                }
+                break;
+          case "picUpload":
+            case "backlogdetail":
+                if (selectedBacklogItemID === "") {
+                    data.toPage[0] = $("#backlog")[0];
+                    $.extend(data.options, {
+                        transition: "flip"
+                    });
                 }
                 break;
         }
     }
 });
 
-
 $(document).on("pagecontainerbeforeshow", function(e, ui) {
     var pageid = ui.toPage.attr("id");
     switch (pageid) {
+        case "backlog":
+          //....
+          load_backlog_data(ui.toPage);
+          break;
+        case "backlogdetail":
+            if (selectedBacklogItemID !== "") {
+                load_backlogitem_data(ui.toPage);
+            }
+            break;
         case "home":
             //....
             cargarHome(ui.toPage);
             break;
+
         case "inicioDeSesion":
             //....
             if(!btnloginBinded){
                 $("#inicioDeSesion-send").on("click", btnIniciarSesion);
             }
             break;
+
         case "cerrarSesion":
             if (btnloginBinded) {
               $("#cerrarDeSesion-send").on("click", btnCerrarSesion);
             }
           break;
+
         case "agregarProductos":
-          $("#agregarPoducto-send").on("click", btnAgregarProducto);
+            $("#agregarPoducto-send").on("click", btnAgregarProducto);
+
           break;
+
         case "conocenos":
           cargarConocenos(ui.toPage);
           break;
+
+        case "agregarUsuarios":
+          $("#agregarUsuario-send").on("click", btnAgregarUsuario)
+          break;
+
+          case "picUpload":
+          if (!uploadBtnBinded){
+            uploadBtnBinded = true;
+            $("#userpic").on("change", userpic_onchange);
+            $("#agregarFoto-send").on("click", btnUpload_onClicked);
+          }
+        break;
 
     }
 });
@@ -77,34 +125,115 @@ function changePage(to){
   $(":mobile-pagecontainer").pagecontainer("change","#"+to);
 }
 
+
+function load_backlogitem_data(backlogitem_page) {
+    showLoading();
+    $.get(
+        "/api/productos/obtenerUnProducto/" + selectedBacklogItemID, {},
+        function(doc, status, xhr) {
+            if(!content){
+                content = $(backlogitem_page).find(".ui-content");
+                html = content.html();
+            }
+
+            var htmlObj = $(html);
+            for (var i in doc) {
+                htmlObj.find("#d_" + i).html(doc[i]);
+            }
+            if(doc.fotos){
+                for (var k = 0; k< doc.fotos.length ; k ++){
+                    htmlObj.append('<div><img src="'+doc.fotos[k]+'" /></div>');
+                }
+            }
+            content.html(htmlObj).find("#btnDelete").on("click", btnDelete_onclick);
+            hideLoading();
+        },
+        "json"
+    ).fail(
+        function(xhr, status, doc) {
+            hideLoading();
+            changePage("backlog");
+        }
+    );
+}
+
+function load_backlog_data(backlog_page) {
+    showLoading();
+    $.get(
+        "/api/productos/obtenerProductos", {},
+        function(docs, success, xhr) {
+
+            if (docs) {
+                var htmlstr = '<ul>';
+                for (var i = 0; i < docs.length; i++) {
+                    var backlogitem = docs[i];
+                    htmlstr += '<li><a href="#backlogdetail" data-id="' + backlogitem._id + '">' + backlogitem.nombre + '</a></li>';
+                }
+                htmlstr += '</ul>';
+                $(backlog_page)
+                    .find("#backlog_container")
+                    .html(htmlstr)
+                    .find("ul")
+                    .listview()
+                    .find("a")
+                    .click(function(e) {
+                        selectedBacklogItemID = $(this).data("id");
+                    });
+            }
+            hideLoading();
+        },
+        "json"
+    );
+}
+
+function btnAgregarUsuario(e){
+  e.preventDefault();
+  e.stopPropagation();
+  var formObject={};
+
+  formObject.correoElectronico= $("#txtCorreoElectronico").val();
+  formObject.nombre= $("#txtNombre").val();
+  formObject.apellido= $("#txtApellido").val();
+  formObject.contrasenia=$("#txtPassword").val();
+  formObject.confirmacionContrasenia=$("#txtConfirmacionContrasenia").val();
+
+  if (formObject.contrasenia===formObject.confirmacionContrasenia) {
+    $.post(
+      '/api/usuarios/ingresarUsuarios',
+      formObject,
+      function(doc, scsTxt, xhrq){
+        if(doc){
+          changePage("home");
+          alert("Te has registrado exitosamente.");
+        }else {
+          alert("Error al registrarte.");
+        }
+      },
+      'json'
+    );
+  }else {
+    alert("Las contrasenias no coinciden.");
+  }
+
+}
+
+function cargarPic(backlog_page){
+  showLoading();
+}
+
 function cargarConocenos(backlog_page){
   showLoading();
 }
 
 function cargarHome(backlog_page) {
     showLoading();
-    console.log(btnloginBinded);
-    $.get(
-      "/api/usuarios/obtenerUsuarios",
-      {},
-      function(usuarios, scsTxt, xhrq){
-        if(usuarios){
-          var htmlBuffer = usuarios.map(function(usuario, i){
-            return "<li><a href> Nombre de usuario:" + usuario.nombreUsuario +", Contrasenia: "+usuario.contrasenia+"</a></li>";
-          });
-          $("#splash_listview").html(htmlBuffer.join("")).listview("refresh");
-        }
-      },
-      'json'
-    );
 }
 
 function btnIniciarSesion(e){
   e.preventDefault();
   e.stopPropagation();
-  console.log(btnloginBinded);
   var formObject={};
-  formObject.nombreUsuario= $("#txtNombreUsuario").val();
+  formObject.correoElectronico= $("#txtCorreo").val();
   formObject.contrasenia=$("#txtContrasenia").val();
   $.post(
     '/api/usuarios/inicioDeSesionParcial',
@@ -114,8 +243,11 @@ function btnIniciarSesion(e){
         $.post(
           '/api/usuarios/inicioDeSesionTotal',
           formObject,
-          function(usuarios,scsTxt,xhrq){
+          function(usuarios, scsTxt, xhrq){
             if (usuarios) {
+              if (usuarios.usuarioRol==="admin") {
+                usuarioAdministrador=true;
+              }
               btnloginBinded = true;
               alert("Ha iniciado sesion exitosamente.");
               changePage("home");
@@ -136,7 +268,7 @@ function btnCerrarSesion(e){
   e.preventDefault();
   e.stopPropagation();
   btnloginBinded = false;
-  console.log(btnloginBinded);
+  usuarioAdministrador=false;
   changePage("home");
 }
 
@@ -159,12 +291,75 @@ function btnAgregarProducto(e){
         alert("Producto ingresado correctamente");
         changePage("home");
       }else {
-        alert("Usuario o contrasenia invalidos.");
+        alert("Producto no se pudo insertar");
       }
     },
     'json'
   );
 }
+
+function userpic_onchange(e) {
+  picFile = e.target.files;
+  var htmlstr = "";
+  htmlstr += "<span><b>Size:</b> ~" + Math.ceil(picFile[0].size / 1024) + "kb </span><br/>";
+  htmlstr += "<span><b>Type:</b> " + picFile[0].type + " </span><br/>";
+  $("#picMsg").html(htmlstr);
+}
+
+function btnUpload_onClicked(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (picFile) {
+      var formBody = new FormData();
+      $.each(picFile, function(llave, valor) {
+          formBody.append("userpic", valor);
+      });
+      formBody.append("backlogid", selectedBacklogItemID);
+      showLoading();
+      $.ajax({
+          url: "api/upload",
+          type: "POST",
+          data: formBody,
+          cache: false,
+          dataType: 'json',
+          processData: false,
+          contentType: false,
+          success: function(data, success, xhr) {
+              $("#frm_agregarFoto").get()[0].reset();
+              hideLoading();
+              change_page("backlogdetail");
+          },
+          error: function(xhr, fail, data) {
+              hideLoading();
+              alert("Error while uploading evidence file. Try again latter!");
+          }
+      });
+  } else {
+      alert("Must select an evidence file!");
+  }
+}
+
+function btnDelete_onclick(e){
+    e.preventDefault();
+    e.stopPropagation();
+    showLoading();
+    console.log(picFile);
+    $.ajax({
+        url:"api/delete/" + selectedBacklogItemID,
+        type:"DELETE",
+        dataType:'json',
+        success: function(data,success,xhr){
+            hideLoading();
+            alert("Story deleted!");
+            change_page("backlog");
+        },
+        error: function(xhr, error, data){
+            hideLoading();
+            alert("Error trying to delete Story.");
+        }
+    });
+}
+
 
 function showLoading(){
     $.mobile.loading( 'show');
