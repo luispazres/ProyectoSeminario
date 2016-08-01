@@ -1,41 +1,9 @@
 body{padding:50px;font:14px "Lucida Grande",Helvetica,Arial,sans-serif}a{color:#9932CC}
 
-@media ( min-width: 35em ) {
-
-	/* wrap on wide viewports once open */
-
-	.ui-panel-page-content-open.ui-panel-page-content-position-left {
-		margin-right: 17em;
-	}
-	.ui-panel-page-content-open.ui-panel-page-content-position-right {
-		margin-left: 17em;
-	}
-	.ui-panel-page-content-open {
-		width: auto;
-	}
-
-	/* disable "dismiss" on wide viewports */
-	.ui-panel-dismiss {
-		display: none;
-	}
-
-	/* same as the above but for panels with display mode "push" only */
-
-	.ui-panel-page-content-open.ui-panel-page-content-position-left.ui-panel-page-content-display-push {
-		margin-right: 17em;
-	}
-	.ui-panel-page-content-open.ui-panel-page-content-position-right.ui-panel-page-content-display-push {
-		margin-left: 17em;
-	}
-	.ui-panel-page-content-open.ui-panel-page-content-display-push {
-		width: auto;
-	}
-
-	.ui-panel-dismiss-display-push {
-		display: none;
-	}
-
-.sinPadding{
-  margin-left: : 0px;
-}
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
 }

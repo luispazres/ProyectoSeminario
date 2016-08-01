@@ -6,6 +6,7 @@ var md5 = require('md5');
 var multer = require('multer');
 var regexpt = /^((image)|(video))\/\w*$/i;
 var fs = require('fs');
+var validator = require('validator');
 var upload = multer({dest:"public/images/",
                      limits:{
                          fileSize: (1024 * 1024 * 10)
@@ -97,6 +98,16 @@ function initApiRoute(db){
     });
   });
 
+  router.post('/usuarios/validarUsuarios',function(req,res,next){
+      if(validator.isNull(req.body.nombre)){
+        console.log(validator.isNull(req.body.nombre));
+        res.status(500);
+      }else{
+        res.status(200);
+      }
+
+  });
+
   router.post('/productos/ingresarProducto', function(req, res, next){
           var doc = {"nombre":"",
            "precioCompra":"",
@@ -148,6 +159,7 @@ function initApiRoute(db){
                }
              });
            }); //end
+
 //ObjectId("579ea540c9db483448d99b9a")
 router.post("/upload",
                 upload.single('userpic'),
