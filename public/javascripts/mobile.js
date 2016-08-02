@@ -1,14 +1,9 @@
-/*var newbacklogBinded = false, uploadBtnBinded = false, btnloginBinded = false,
-    btnRegisterBinded = false, btnDeleteBinded = false, nuevoProductoIngresado=false, usuarioAdministrador=false;
-var selectedBacklogItemID = "";
-var content, html, picFile;*/
 
 var newbacklogBinded = false, uploadBtnBinded = false, btnloginBinded = false,
     uploadBtnBinded2 = false, btnRegisterBinded = false, btnDeleteBinded = false,nuevoProductoIngresado=false, usuarioAdministrador=false;
-var selectedBacklogItemID = "";
-var content, html, picFile,html2;
+var selectedBacklogItemID = "", totalGlobal=0, carritoBtnBinded=false;
+var content, content3, html, html3, picFile,html2, usuarioID="";
 var carrito=[];
-
 
 $(document).on("mobileinit", function(e){
     $.mobile.loader.prototype.options.text = "Please Wait";
@@ -23,7 +18,7 @@ $(document).on("mobileinit", function(e){
 
 $(document).ajaxError(function(e, xhr, set, err){
     if(xhr.status===403){
-        change_page("home");
+        change_page("carrito");
     }
 });
 
@@ -88,6 +83,22 @@ $(document).on("pagebeforechange", function(e, data) {
                     }
                   }
                   break;
+                case "carrito":
+                  if (btnloginBinded === false){
+                      data.toPage[0] = $("#inicioDeSesion")[0];
+                      $.extend(data.options, {
+                          transition: "flip"
+                      });
+                    }
+                  break;
+                case "misOrdenes":
+                  if (btnloginBinded === false){
+                      data.toPage[0] = $("#inicioDeSesion")[0];
+                      $.extend(data.options, {
+                          transition: "flip"
+                      });
+                    }
+                  break;
         }
     }
 });
@@ -98,6 +109,15 @@ $(document).on("pagecontainerbeforeshow", function(e, ui) {
         case "backlog":
           //....
           load_backlog_data(ui.toPage);
+          break;
+        case "carrito":
+        if (!newbacklogBinded) {
+            newbacklogBinded = true;
+            load_backlog_dataCarrito(ui.toPage);
+            $("#btnComprar").on("click", btnComprar_onClicked);
+        }else {
+            load_backlog_dataCarrito(ui.toPage);
+        }
           break;
         case "backlogdetail":
             if (selectedBacklogItemID !== "") {
@@ -110,7 +130,6 @@ $(document).on("pagecontainerbeforeshow", function(e, ui) {
                 }
                 break;
         case "home":
-            //....
             load_backlog_dataHome(ui.toPage);
             break;
 
@@ -147,7 +166,9 @@ $(document).on("pagecontainerbeforeshow", function(e, ui) {
             $("#agregarFoto-send").on("click", btnUpload_onClicked);
           }
         break;
-
+        case "misOrdenes":
+          load_backlog_dataOrdenes(ui.toPage);
+          break;
     }
 });
 
@@ -187,6 +208,36 @@ function load_backlogitem_data(backlogitem_page) {
     );
 }
 
+function btnComprar_onClicked(e){
+  e.preventDefault();
+  e.stopPropagation();
+  console.log(carrito);
+  var formObject2 ={
+    "total":$("#txtTotal").val(),
+    "usuarioID":usuarioID,
+    "productos":carrito
+  };
+  console.log(formObject2);
+  $.ajax({
+  type: 'POST',
+  data: JSON.stringify(formObject2),
+  contentType: 'application/json',
+  url: '/api/usuarios/ingresarOrden',
+  dataType: 'json',
+  processData: false,
+  cache: false,
+  success: function(data, success, xhr) {
+      hideLoading();
+      changePage("misOrdenes");
+  },
+  error: function(xhr, fail, data) {
+      hideLoading();
+      alert("Error");
+  }
+
+});
+}
+
 function load_backlogitem_dataProducto(backlogitem_page) {
     showLoading();
     $.get(
@@ -215,7 +266,7 @@ function load_backlogitem_dataProducto(backlogitem_page) {
             }
         //    content2.html(htmlObj2).find("#txtStock");
 
-            content.html(htmlObj).find("#btnDelete2").on("click", btnDelete_onclick);
+            content.html(htmlObj).find("#btnAgregarAlCarro").on("click", btnCarrito);
             hideLoading();
         },
         "json"
@@ -225,10 +276,6 @@ function load_backlogitem_dataProducto(backlogitem_page) {
             changePage("home");
         }
     );
-}
-
-function stockChange(e){
-
 }
 
 function load_backlog_data(backlog_page) {
@@ -261,6 +308,7 @@ function load_backlog_data(backlog_page) {
 }
 
 function load_backlog_dataHome(backlog_page) {
+
     showLoading();
     $.get(
         "/api/productos/obtenerProductos", {},
@@ -288,6 +336,68 @@ function load_backlog_dataHome(backlog_page) {
         },
         "json"
     );
+}
+
+function load_backlog_dataOrdenes(backlog_page) {
+    showLoading();
+    var formObject={
+      "usuarioID":usuarioID
+    }
+    $.get(
+        "/api/usuarios/obtenerOrdenes/"+usuarioID, {},
+        function(docs, success, xhr) {
+            if (docs) {
+                var htmlstr = '<ul>';
+                for (var i = 0; i < docs.ordenes.length; i++) {
+                    var backlogitem = docs.ordenes[i];
+                    htmlstr+='<li><a>Total Orden: '+backlogitem.total+'';
+                    for (var x = 0; x < docs.ordenes[i].productos.length; x++){
+                    htmlstr += '</br>Producto: "'+docs.ordenes[i].productos[x].nombre+'" </br> Cantidad:"'+docs.ordenes[i].productos[x].Cantidad +'"</br><img src="'+docs.ordenes[i].productos[x].fotos+'"/>';
+                    }
+                    htmlstr+='</br></a></li>';
+                }
+                htmlstr += '</ul>';
+                $(backlog_page)
+                    .find("#backlog_containerOrdenes")
+                    .html(htmlstr)
+                    .find("ul")
+                    .listview()
+                    .find("a")
+                    .click(function(e) {
+
+                    });
+            }
+            hideLoading();
+        },
+        "json"
+    );
+}
+
+function load_backlog_dataCarrito(backlog_page) {
+    showLoading();
+      var total=0;
+            if (carrito.length!=0) {
+            //  content.html(htmlObj).find("#btnComprar").on("click", btnComprar_onClicked);
+                var htmlstr = '<ul>';
+                for (var i = 0; i < carrito.length; i++) {
+                    var backlogitem = carrito[i];
+                    total+=backlogitem.subTotalProducto;
+                    foto =backlogitem.fotos;
+                    htmlstr += '<li><a href="#detalleProducto" data-id="' + backlogitem._id + '">' + backlogitem.nombre+"</br> Precio:"+backlogitem.precioVenta+"</br> Lleva:"+backlogitem.cantidad +" Productos</br>Sub total del Producto: "+backlogitem.subTotalProducto+ "</br><img src='"+foto+"'/>"+'</a></li>';
+                }
+                htmlstr += '</ul>';
+                htmlstr += '</br><div class="label">Total: </div><div><input type="number" name="txtTotal" pattern="[0-9]*" id="txtTotal" value="'+total+'"></div>';
+                $(backlog_page)
+                    .find("#backlog_containerCarrito")
+                    .html(htmlstr)
+                    .find("ul")
+                    .listview()
+                    .find("a")
+                    .click(function(e) {
+                        selectedBacklogItemID = $(this).data("id");
+                    });
+            }
+            hideLoading();
 }
 
 function btnAgregarUsuario(e){
@@ -335,6 +445,7 @@ function cargarConocenos(backlog_page){
 
 function cargarHome(backlog_page) {
     showLoading();
+    console.log(carrito);
 }
 
 function btnIniciarSesion(e){
@@ -354,9 +465,11 @@ function btnIniciarSesion(e){
           function(usuarios, scsTxt, xhrq){
             if (usuarios) {
               btnloginBinded=true;
+              usuarioID=usuarios._id;
               if (usuarios.usuarioRol==="admin") {
                 usuarioAdministrador=true;
               }
+              carrito=[];
               changePage("home");
             }else {
               alert("Usuario o contrasenia invalidos.");
@@ -444,25 +557,33 @@ function btnUpload_onClicked(e) {
   }
 }
 
-function btnDelete_onclick(e){
+function btnCarrito(e){
     e.preventDefault();
     e.stopPropagation();
     showLoading();
-    console.log(picFile);
-    $.ajax({
-        url:"api/delete/" + selectedBacklogItemID,
-        type:"DELETE",
-        dataType:'json',
-        success: function(data,success,xhr){
+    var formObject ={};
+    formObject.cantidad=$("#txtCantidad").val();
+    $.get(
+          "/api/productos/obtenerUnProducto/" + selectedBacklogItemID, {},
+        function(docs, success, xhr){
+            if (docs) {
+              formObject._id=docs._id;
+              formObject.nombre=docs.nombre;
+              formObject.stock=docs.stock;
+              formObject.precioVenta=docs.precioVenta;
+              formObject.fotos=docs.fotos[0];
+              formObject.subTotalProducto=formObject.cantidad*formObject.precioVenta;
+              console.log(formObject.stock);
+              console.log(formObject.cantidad);
+                carrito.push(formObject);
+                changePage("carrito");
+            }else {
+              alert("error");
+            }
             hideLoading();
-            alert("Story deleted!");
-            change_page("backlog");
         },
-        error: function(xhr, error, data){
-            hideLoading();
-            alert("Error trying to delete Story.");
-        }
-    });
+        "json"
+    );
 }
 
 

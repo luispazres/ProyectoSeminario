@@ -64,6 +64,17 @@ function initApiRoute(db){
       });
   });
 
+  router.get("/usuarios/obtenerOrdenes/:backlogId", function(req,res){
+      var query = {_id: new ObjectID(req.params.backlogId)};
+      usuarios.findOne(query,function(err, doc){
+          if(err){
+              res.status(500).json({"error":"Error al extraer el Backlog"});
+          }else{
+              res.status(200).json(doc);
+          }
+      });
+  });
+
   router.post('/usuarios/inicioDeSesionParcial',function(req,res,next){
     var doc={"correoElectronico":""};
     doc.correoElectronico=req.body.correoElectronico;
@@ -133,6 +144,33 @@ function initApiRoute(db){
             }
           });
       });//end CREATEPRODUCTS
+
+
+
+      router.post('/usuarios/ingresarOrden', function(req,res){
+              var orden={
+                "total":"",
+                "carrito":"",
+                "usuarioID":""
+              };
+
+
+              assign(orden,{}, req.body);
+
+              console.log(orden);
+             var query = {_id: new ObjectID(req.body.usuarioID)};
+              usuarios.update(
+                  query,
+                  {"$push":{"ordenes":(orden)}},
+                  function(err,result){
+                      if(err){
+                          res.status(500).json({"error":err});
+                      }else{
+                          res.status(200).json(orden);
+                      }
+                  }
+              );
+          });//end CREATEPRODUCTS
 
       router.post('/usuarios/ingresarUsuarios', function(req, res, next){
               var doc = {
